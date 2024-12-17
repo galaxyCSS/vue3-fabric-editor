@@ -28,12 +28,14 @@
         </div>
       </div>
       <div class="slide slide-right">
-        <div class="right-box" v-show="!rightToggle"></div>
+        <div class="right-box" v-show="!rightToggle">
+          <SizeControl></SizeControl>
+        </div>
         <div class="toggle" @click="changeToggle('right')">
           <svg-icon :icon="rightToggle ? 'zuojiantou' : 'youjiantou'"></svg-icon>
         </div>
       </div>
-      <div class="editor-wrap">
+      <div class="editor-wrap" ref="editorWrapRef">
         <canvas id="editor" ref="editorRef"></canvas>
       </div>
     </div>
@@ -43,10 +45,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import SizeControl from '@/components/CanvasControl/SizeControl.vue'
+import { useCommonStore } from '@/store/common'
 import * as fabric from 'fabric'
+const commonStore = useCommonStore()
 const leftToggle = ref(false)
 const rightToggle = ref(false)
+const editorWrapRef = ref()
 const editorRef = ref()
+
 const changeToggle = (dir) => {
   if (dir === 'left') {
     leftToggle.value = !leftToggle.value
@@ -54,21 +61,36 @@ const changeToggle = (dir) => {
     rightToggle.value = !rightToggle.value
   }
 }
-// 初始化绘制区域
+// 初始化画布
 const initEditor = () => {
-  const canvas = new fabric.Canvas(editorRef.value)
+  const drawArea = commonStore.drawArea
+  const { offsetWidth, offsetHeight } = editorWrapRef.value
+  const editor = new fabric.Canvas(editorRef.value, {
+    width: offsetWidth,
+    height: offsetHeight
+  })
+  // 初始化绘制区域
   const rect = new fabric.Rect({
-    width: 50,
-    height: 50,
-    left: 100,
-    top: 0,
-    stroke: '#aaf',
-    strokeWidth: 5,
-    fill: '#faa',
+    width: drawArea.width,
+    height: drawArea.height,
+    left: (offsetWidth - drawArea.width) / 2,
+    top: (offsetHeight - drawArea.height) / 2,
+    fill: '#fff',
     selectable: false
   })
-  canvas.add(rect)
+  editor.add(rect)
+  // 初始化绘制区域按中心点缩放
+  editor.zoomToPoint(
+    {
+      x: offsetWidth / 2,
+      y: offsetHeight / 2
+    },
+    0.3
+  )
+  commonStore.editor = editor
+  commonStore.drawArea.target = rect
 }
+
 onMounted(() => {
   initEditor()
 })
@@ -101,13 +123,14 @@ onMounted(() => {
   .container {
     width: 100%;
     height: calc(100% - 50px);
-    background: #f4faff;
+    background: #d1eaff;
     position: relative;
     .slide {
       position: absolute;
       top: 0;
       height: 100%;
       background: #fff;
+      z-index: 1;
       &.slide-left {
         left: 0;
         display: flex;
@@ -147,7 +170,7 @@ onMounted(() => {
           cursor: pointer;
         }
         .right-box {
-          width: 300px;
+          width: 330px;
         }
       }
     }
@@ -157,9 +180,6 @@ onMounted(() => {
       display: flex;
       justify-content: center;
       align-items: center;
-      #editor {
-        background: #fff;
-      }
     }
   }
 }
