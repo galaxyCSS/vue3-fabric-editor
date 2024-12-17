@@ -33,16 +33,20 @@
           <svg-icon :icon="rightToggle ? 'zuojiantou' : 'youjiantou'"></svg-icon>
         </div>
       </div>
-      <div class="editor-wrap"></div>
+      <div class="editor-wrap">
+        <canvas id="editor" ref="editorRef"></canvas>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
+import * as fabric from 'fabric'
 const leftToggle = ref(false)
 const rightToggle = ref(false)
+const editorRef = ref()
 const changeToggle = (dir) => {
   if (dir === 'left') {
     leftToggle.value = !leftToggle.value
@@ -50,6 +54,24 @@ const changeToggle = (dir) => {
     rightToggle.value = !rightToggle.value
   }
 }
+// 初始化绘制区域
+const initEditor = () => {
+  const canvas = new fabric.Canvas(editorRef.value)
+  const rect = new fabric.Rect({
+    width: 50,
+    height: 50,
+    left: 100,
+    top: 0,
+    stroke: '#aaf',
+    strokeWidth: 5,
+    fill: '#faa',
+    selectable: false
+  })
+  canvas.add(rect)
+}
+onMounted(() => {
+  initEditor()
+})
 </script>
 
 <style scoped>
@@ -127,6 +149,16 @@ const changeToggle = (dir) => {
         .right-box {
           width: 300px;
         }
+      }
+    }
+    .editor-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      #editor {
+        background: #fff;
       }
     }
   }
