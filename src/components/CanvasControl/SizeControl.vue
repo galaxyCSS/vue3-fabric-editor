@@ -16,6 +16,16 @@
         <span><svg-icon icon="zuojiantou"></svg-icon></span>
         <span>调整尺寸</span>
       </div>
+      <div class="customize">
+        <div class="item">
+          <span class="label">宽:</span>
+          <el-input-number v-model="drawArea.width" :controls="false" />
+        </div>
+        <div class="item">
+          <span class="label">高:</span>
+          <el-input-number v-model="drawArea.height" :controls="false" />
+        </div>
+      </div>
       <div class="list">
         <div
           :class="['item', drawArea.width == item.width && drawArea.height == item.height ? 'active' : '']"
@@ -35,11 +45,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useCommonStore } from '@/store/common'
+import { debounce } from '@/utils'
 const isChangeSize = ref(false)
+
 const commonStore = useCommonStore()
 const drawArea = commonStore.drawArea
+
 const sizeList = ref([
   { label: '原尺寸', width: drawArea.width, height: drawArea.height, scale: drawArea.scale },
   { label: '公众号封面首图', width: 900, height: 383, scale: 0.8 },
@@ -54,7 +67,7 @@ const backAc = () => {
 }
 const chooseSizeAc = (item) => {
   const { width, height } = commonStore.container
-  let editor = commonStore.editor
+  const editor = commonStore.editor
   drawArea.target.set({
     width: item.width,
     height: item.height,
@@ -73,6 +86,18 @@ const chooseSizeAc = (item) => {
   commonStore.drawArea.height = item.height
   commonStore.drawArea.scale = item.scale
 }
+const debounceFn = debounce((newState) => {
+  console.log(newState)
+  chooseSizeAc({
+    width: newState.width,
+    height: newState.height,
+    scale: 0.3
+  })
+}, 1000)
+
+watch(() => drawArea, debounceFn, {
+  deep: true
+})
 </script>
 
 <style scoped>
@@ -95,8 +120,26 @@ const chooseSizeAc = (item) => {
     }
   }
   .size-list {
-    .label {
+    & > .label {
       font-weight: 600;
+      margin-bottom: 15px;
+    }
+    .customize {
+      display: flex;
+      margin-bottom: 15px;
+      .item {
+        white-space: nowrap;
+        padding: 0 5px;
+        display: flex;
+        align-items: center;
+        .label {
+          margin-right: 5px;
+        }
+        .el-input-number {
+          flex: 1;
+          width: unset;
+        }
+      }
     }
     .list {
       .item {
