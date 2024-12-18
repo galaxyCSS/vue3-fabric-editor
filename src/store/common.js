@@ -3,7 +3,7 @@ export const useCommonStore = defineStore('common', {
   state: () => ({
     editor: null,
     drawArea: {
-      width: 1490,
+      width: 1240,
       height: 2200,
       target: null
     }

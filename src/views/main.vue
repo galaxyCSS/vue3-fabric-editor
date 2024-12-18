@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import { useCommonStore } from '@/store/common'
@@ -87,8 +87,8 @@ const initEditor = () => {
     },
     0.3
   )
-  commonStore.editor = editor
-  commonStore.drawArea.target = rect
+  commonStore.editor = markRaw(editor)
+  commonStore.drawArea.target = markRaw(rect)
 }
 
 onMounted(() => {
@@ -157,6 +157,7 @@ onMounted(() => {
       }
       &.slide-right {
         right: 0;
+        padding: 15px;
         .toggle {
           width: 20px;
           height: 50px;
