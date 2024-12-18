@@ -85,10 +85,12 @@ const initEditor = () => {
       x: offsetWidth / 2,
       y: offsetHeight / 2
     },
-    0.3
+    drawArea.scale
   )
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
+  commonStore.container.width = offsetWidth
+  commonStore.container.height = offsetHeight
 }
 
 onMounted(() => {
@@ -157,7 +159,6 @@ onMounted(() => {
       }
       &.slide-right {
         right: 0;
-        padding: 15px;
         .toggle {
           width: 20px;
           height: 50px;
@@ -172,6 +173,7 @@ onMounted(() => {
         }
         .right-box {
           width: 330px;
+          padding: 15px;
         }
       }
     }

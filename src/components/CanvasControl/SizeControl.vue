@@ -41,10 +41,10 @@ const isChangeSize = ref(false)
 const commonStore = useCommonStore()
 const drawArea = commonStore.drawArea
 const sizeList = ref([
-  { label: '原尺寸', width: drawArea.width, height: drawArea.height },
-  { label: '公众号封面首图', width: 900, height: 383 },
-  { label: '朋友圈封面', width: 1280, height: 1184 },
-  { label: '手机海报', width: 1242, height: 2208 }
+  { label: '原尺寸', width: drawArea.width, height: drawArea.height, scale: drawArea.scale },
+  { label: '公众号封面首图', width: 900, height: 383, scale: 0.8 },
+  { label: '朋友圈封面', width: 1280, height: 1184, scale: 0.5 },
+  { label: '营销长图', width: 800, height: 2000, scale: 0.4 }
 ])
 const changeSizeAc = () => {
   isChangeSize.value = true
@@ -53,11 +53,25 @@ const backAc = () => {
   isChangeSize.value = false
 }
 const chooseSizeAc = (item) => {
+  const { width, height } = commonStore.container
+  let editor = commonStore.editor
   drawArea.target.set({
     width: item.width,
-    height: item.height
+    height: item.height,
+    left: (width - item.width) / 2,
+    top: (height - item.height) / 2
   })
-  commonStore.editor.renderAll()
+  editor.zoomToPoint(
+    {
+      x: width / 2,
+      y: height / 2
+    },
+    item.scale
+  )
+  editor.renderAll()
+  commonStore.drawArea.width = item.width
+  commonStore.drawArea.height = item.height
+  commonStore.drawArea.scale = item.scale
 }
 </script>
 
