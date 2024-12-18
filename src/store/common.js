@@ -8,7 +8,7 @@ export const useCommonStore = defineStore('common', {
       width: 1240,
       height: 2200,
       target: null,
-      scale: 0.3
+      scale: 30
     },
     // 布局容器
     container: {

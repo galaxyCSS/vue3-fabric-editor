@@ -55,9 +55,9 @@ const drawArea = commonStore.drawArea
 
 const sizeList = ref([
   { label: '原尺寸', width: drawArea.width, height: drawArea.height, scale: drawArea.scale },
-  { label: '公众号封面首图', width: 900, height: 383, scale: 0.8 },
-  { label: '朋友圈封面', width: 1280, height: 1184, scale: 0.5 },
-  { label: '营销长图', width: 800, height: 2000, scale: 0.4 }
+  { label: '公众号封面首图', width: 900, height: 383, scale: 80 },
+  { label: '朋友圈封面', width: 1280, height: 1184, scale: 50 },
+  { label: '营销长图', width: 800, height: 2000, scale: 40 }
 ])
 const changeSizeAc = () => {
   isChangeSize.value = true
@@ -65,7 +65,7 @@ const changeSizeAc = () => {
 const backAc = () => {
   isChangeSize.value = false
 }
-const chooseSizeAc = (item) => {
+const chooseSizeAc = (item, isZoom = true) => {
   const { width, height } = commonStore.container
   const editor = commonStore.editor
   drawArea.target.set({
@@ -74,25 +74,29 @@ const chooseSizeAc = (item) => {
     left: (width - item.width) / 2,
     top: (height - item.height) / 2
   })
-  editor.zoomToPoint(
-    {
-      x: width / 2,
-      y: height / 2
-    },
-    item.scale
-  )
+  // 画布已经缩放，不必再进一步缩放
+  if (isZoom) {
+    editor.zoomToPoint(
+      {
+        x: width / 2,
+        y: height / 2
+      },
+      item.scale / 100
+    )
+    commonStore.drawArea.scale = item.scale
+  }
   editor.renderAll()
   commonStore.drawArea.width = item.width
   commonStore.drawArea.height = item.height
-  commonStore.drawArea.scale = item.scale
 }
 const debounceFn = debounce((newState) => {
-  console.log(newState)
-  chooseSizeAc({
-    width: newState.width,
-    height: newState.height,
-    scale: 0.3
-  })
+  chooseSizeAc(
+    {
+      width: newState.width,
+      height: newState.height
+    },
+    false
+  )
 }, 1000)
 
 watch(() => drawArea, debounceFn, {

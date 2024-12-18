@@ -38,6 +38,7 @@
       <div class="editor-wrap" ref="editorWrapRef">
         <canvas id="editor" ref="editorRef"></canvas>
       </div>
+      <SizeScaleControl :class="rightToggle ? 'move' : ''"></SizeScaleControl>
     </div>
   </div>
 </template>
@@ -46,6 +47,7 @@
 import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
+import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
 import { useCommonStore } from '@/store/common'
 import * as fabric from 'fabric'
 const commonStore = useCommonStore()
@@ -85,7 +87,7 @@ const initEditor = () => {
       x: offsetWidth / 2,
       y: offsetHeight / 2
     },
-    drawArea.scale
+    drawArea.scale / 100
   )
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
