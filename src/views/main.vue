@@ -56,7 +56,7 @@ const leftToggle = ref(false)
 const rightToggle = ref(false)
 const editorWrapRef = ref()
 const editorRef = ref()
-
+let initVpt = []
 const changeToggle = (dir) => {
   if (dir === 'left') {
     leftToggle.value = !leftToggle.value
@@ -120,6 +120,34 @@ const initEditor = () => {
     },
     drawArea.scale / 100
   )
+  // 初始化画布平移
+  editor.on('mouse:down', (opt) => {
+    let evt = opt.e
+    if (evt.altKey === true) {
+      initVpt = editor.viewportTransform
+      // 是否按住alt
+      editor.isDragging = true
+      editor.lastPosX = evt.clientX
+      editor.lastPosY = evt.clientY
+    }
+  })
+  editor.on('mouse:move', (opt) => {
+    if (editor.isDragging) {
+      let evt = opt.e
+      let vpt = editor.viewportTransform
+      vpt[4] += evt.clientX - editor.lastPosX
+      vpt[5] += evt.clientY - editor.lastPosY
+      editor.requestRenderAll()
+      editor.lastPosX = evt.clientX
+      editor.lastPosY = evt.clientY
+    }
+  })
+  editor.on('mouse:up', (opt) => {
+    let evt = opt.e
+    editor.setViewportTransform(editor.viewportTransform)
+    editor.isDragging = false
+  })
+
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
   commonStore.container.width = offsetWidth
