@@ -16,7 +16,7 @@
         </div>
       </div>
       <div class="head-r">
-        <el-button type="primary">下载</el-button>
+        <el-button type="primary" @click="downloadAc">下载</el-button>
       </div>
     </div>
     <div class="container">
@@ -49,6 +49,7 @@ import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
 import { useCommonStore } from '@/store/common'
+import { downloadFileByBase64 } from '@/utils'
 import * as fabric from 'fabric'
 const commonStore = useCommonStore()
 const leftToggle = ref(false)
@@ -62,6 +63,36 @@ const changeToggle = (dir) => {
   } else {
     rightToggle.value = !rightToggle.value
   }
+}
+const downloadAc = () => {
+  const { width, height } = commonStore.container
+  const editor = commonStore.editor
+  const drawArea = commonStore.drawArea
+  // 恢复画布缩放
+  editor.zoomToPoint(
+    {
+      x: width / 2,
+      y: height / 2
+    },
+    1
+  )
+  let baseImg = editor.toDataURL({
+    format: 'png',
+    left: (width - drawArea.width) / 2,
+    top: (height - drawArea.height) / 2,
+    width: drawArea.width,
+    height: drawArea.height
+  })
+  // 重新缩放
+  editor.zoomToPoint(
+    {
+      x: width / 2,
+      y: height / 2
+    },
+    0.3
+  )
+  // 下载图片
+  downloadFileByBase64(baseImg, 'demo')
 }
 // 初始化画布
 const initEditor = () => {
