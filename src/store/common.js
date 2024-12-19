@@ -3,6 +3,7 @@ export const useCommonStore = defineStore('common', {
   state: () => ({
     // 画布对象
     editor: null,
+    editorVpt: [],
     // 绘制区域
     drawArea: {
       width: 1240,

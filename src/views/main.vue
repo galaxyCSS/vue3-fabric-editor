@@ -56,7 +56,6 @@ const leftToggle = ref(false)
 const rightToggle = ref(false)
 const editorWrapRef = ref()
 const editorRef = ref()
-let initVpt = []
 const changeToggle = (dir) => {
   if (dir === 'left') {
     leftToggle.value = !leftToggle.value
@@ -68,6 +67,14 @@ const downloadAc = () => {
   const { width, height } = commonStore.container
   const editor = commonStore.editor
   const drawArea = commonStore.drawArea
+  // 获取偏移值，需要计算恢复缩放比例下的实际值
+  // let offsetX = editor.endOffsetX ? (editor.endOffsetX - editor.startOffsetX) / (editor.moveScale / 100) : 0
+  // let offsetY = editor.endOffsetY ? (editor.endOffsetY - editor.startOffsetY) / (editor.moveScale / 100) : 0
+  // 下载完再次移动需要叠加下载前移动的偏移值
+  // if (editor.lastOffsetX) offsetX += editor.lastOffsetX
+  // if (editor.lastOffsetY) offsetX += editor.lastOffsetY
+  // 恢复绘制区域位置(最佳方案，替代计算偏移后叠加)
+  editor.setViewportTransform(editor.initVpt)
   // 恢复画布缩放
   editor.zoomToPoint(
     {
@@ -76,8 +83,12 @@ const downloadAc = () => {
     },
     1
   )
+  // 记录下载前平移的偏移值
+  // editor.lastOffsetX = offsetX
+  // editor.lastOffsetY = offsetY
   let baseImg = editor.toDataURL({
     format: 'png',
+    // 叠加偏移值 + offsetX(已取消的方案)
     left: (width - drawArea.width) / 2,
     top: (height - drawArea.height) / 2,
     width: drawArea.width,
@@ -89,7 +100,7 @@ const downloadAc = () => {
       x: width / 2,
       y: height / 2
     },
-    0.3
+    drawArea.scale / 100
   )
   // 下载图片
   downloadFileByBase64(baseImg, 'demo')
@@ -120,15 +131,22 @@ const initEditor = () => {
     },
     drawArea.scale / 100
   )
+  // 存储画布原始vpt
+  let initVpt = JSON.parse(JSON.stringify(editor.viewportTransform))
+  editor.initVpt = markRaw(initVpt)
   // 初始化画布平移
   editor.on('mouse:down', (opt) => {
     let evt = opt.e
     if (evt.altKey === true) {
-      initVpt = editor.viewportTransform
       // 是否按住alt
       editor.isDragging = true
       editor.lastPosX = evt.clientX
       editor.lastPosY = evt.clientY
+      // 记录点击位置
+      // editor.startOffsetX = evt.clientX
+      // editor.startOffsetY = evt.clientY
+      // 记录移动时的缩放比例
+      // editor.moveScale = drawArea.scale
     }
   })
   editor.on('mouse:move', (opt) => {
@@ -137,17 +155,14 @@ const initEditor = () => {
       let vpt = editor.viewportTransform
       vpt[4] += evt.clientX - editor.lastPosX
       vpt[5] += evt.clientY - editor.lastPosY
-      editor.requestRenderAll()
+      editor.renderAll()
       editor.lastPosX = evt.clientX
       editor.lastPosY = evt.clientY
     }
   })
   editor.on('mouse:up', (opt) => {
-    let evt = opt.e
-    editor.setViewportTransform(editor.viewportTransform)
     editor.isDragging = false
   })
-
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
   commonStore.container.width = offsetWidth
