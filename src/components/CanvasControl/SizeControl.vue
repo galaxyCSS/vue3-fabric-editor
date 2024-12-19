@@ -106,6 +106,7 @@ watch(() => drawArea, debounceFn, {
 
 <style scoped>
 .size-control {
+  margin-bottom: 15px;
   .wrap {
     .label {
       display: flex;

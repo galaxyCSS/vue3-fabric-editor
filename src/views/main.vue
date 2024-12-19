@@ -30,6 +30,7 @@
       <div class="slide slide-right">
         <div class="right-box" v-show="!rightToggle">
           <SizeControl></SizeControl>
+          <BackgroundControl></BackgroundControl>
         </div>
         <div class="toggle" @click="changeToggle('right')">
           <svg-icon :icon="rightToggle ? 'zuojiantou' : 'youjiantou'"></svg-icon>
@@ -48,6 +49,7 @@ import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
+import BackgroundControl from '@/components/CanvasControl/BackgroundControl.vue'
 import { useCommonStore } from '@/store/common'
 import { downloadFileByBase64 } from '@/utils'
 import * as fabric from 'fabric'
@@ -113,6 +115,7 @@ const initEditor = () => {
     width: offsetWidth,
     height: offsetHeight
   })
+  editor.remove()
   // 初始化绘制区域
   const rect = new fabric.Rect({
     width: drawArea.width,
@@ -123,6 +126,7 @@ const initEditor = () => {
     selectable: false
   })
   editor.add(rect)
+
   // 初始化绘制区域按中心点缩放
   editor.zoomToPoint(
     {
