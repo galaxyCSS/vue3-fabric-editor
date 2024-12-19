@@ -21,8 +21,12 @@
     </div>
     <div class="container">
       <div class="slide slide-left">
-        <div class="left-bar"></div>
-        <div class="left-box" v-show="!leftToggle"></div>
+        <div class="left-bar">
+          <EditorBar></EditorBar>
+        </div>
+        <div class="left-box" v-show="!leftToggle">
+          <TextAdd></TextAdd>
+        </div>
         <div class="toggle" @click="changeToggle('left')">
           <svg-icon :icon="leftToggle ? 'youjiantou' : 'zuojiantou'"></svg-icon>
         </div>
@@ -49,7 +53,9 @@ import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
+import EditorBar from '@/components/LayoutCo/EditorBar.vue'
 import BackgroundControl from '@/components/CanvasControl/BackgroundControl.vue'
+import TextAdd from '@/components/LayoutCo/TextAdd.vue'
 import { useCommonStore } from '@/store/common'
 import { downloadFileByBase64 } from '@/utils'
 import * as fabric from 'fabric'
@@ -223,6 +229,7 @@ onMounted(() => {
         }
         .left-box {
           width: 280px;
+          padding: 15px;
         }
         .toggle {
           width: 20px;
