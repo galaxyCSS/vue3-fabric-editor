@@ -11,8 +11,8 @@
             <label for="uploadFile">上传图片</label>
             <input type="file" @change="uploadChange" name="uploadFile" id="uploadFile" />
           </div>
-          <span v-if="uploadData" @click="deleteBgAc">删除</span>
-          <span v-if="uploadData" @click="addBgAc">添加</span>
+          <span v-if="uploadData" @click="deleteBgAc" class="option">删除</span>
+          <span v-if="uploadData" @click="addBgAc" class="option">添加</span>
         </div>
         <div class="photo-view" v-if="uploadData">
           <img :src="uploadData" alt="" ref="photoViewRef" class="size-add" />
@@ -20,7 +20,21 @@
         </div>
       </div>
     </div>
-    <div class="item-control"></div>
+    <div class="item-control">
+      <div class="label">背景颜色</div>
+      <div class="color-group">
+        <div class="item custom-item">
+          <el-color-picker v-model="cusColor" show-alpha @change="colorChange" />
+        </div>
+        <div
+          class="item"
+          v-for="item in colorGroup"
+          :key="item"
+          :style="{ background: item }"
+          @click="colorChange(item)"
+        ></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -28,10 +42,26 @@
 import { markRaw, ref, watch } from 'vue'
 import * as fabric from 'fabric'
 import { useCommonStore } from '@/store/common'
+const colorGroup = [
+  '#f5222d',
+  '#ff7a45',
+  '#ffa940',
+  '#ffc53d',
+  '#ffec3d',
+  '#bae637',
+  '#73d13d',
+  '#36cfc9',
+  '#4096ff',
+  '#597ef7',
+  '#9254de',
+  '#f759ab',
+  '#fff'
+]
 const commonStore = useCommonStore()
 const drawArea = commonStore.drawArea
 const uploadData = ref('')
 const photoViewRef = ref('')
+const cusColor = ref('')
 const uploadChange = (ele) => {
   const file = ele.target.files[0]
   const reader = new FileReader()
@@ -63,6 +93,14 @@ const addBgAc = () => {
   backImgcontainer.width = offsetWidth
   backImgcontainer.height = offsetHeight
 }
+const colorChange = (value) => {
+  const editor = commonStore.editor
+  cusColor.value = value
+  drawArea.target.set({
+    fill: value
+  })
+  editor.renderAll()
+}
 </script>
 
 <style scoped>
@@ -74,12 +112,13 @@ const addBgAc = () => {
     .label {
       font-size: 12px;
       color: #999;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
     .upload {
       .upload-t {
         display: flex;
         align-items: center;
+        margin-bottom: 10px;
         .upload-cover {
           padding: 5px 10px;
           border: 1px solid #eee;
@@ -90,6 +129,12 @@ const addBgAc = () => {
           label {
             cursor: pointer;
           }
+        }
+        .option {
+          font-size: 12px;
+          padding: 0 5px;
+          color: var(--el-color-primary);
+          cursor: pointer;
         }
       }
       #uploadFile {
@@ -107,6 +152,26 @@ const addBgAc = () => {
       }
       .size-view {
         width: 100%;
+      }
+    }
+    .color-group {
+      display: flex;
+      flex-wrap: wrap;
+      .item {
+        width: 40px;
+        height: 40px;
+        border-radius: 5px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #eee;
+        cursor: pointer;
+        &.custom-item {
+          border: none;
+          :deep(.el-color-picker__trigger) {
+            width: 40px;
+            height: 40px;
+          }
+        }
       }
     }
   }
