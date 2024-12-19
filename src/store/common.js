@@ -17,6 +17,11 @@ export const useCommonStore = defineStore('common', {
     container: {
       width: 0,
       height: 0
+    },
+    // 原始背景图片容器
+    backImgcontainer: {
+      width: 0,
+      height: 0
     }
   })
 })

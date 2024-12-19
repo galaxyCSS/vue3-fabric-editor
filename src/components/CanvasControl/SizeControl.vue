@@ -67,6 +67,8 @@ const backAc = () => {
 }
 const chooseSizeAc = (item, isZoom = true) => {
   const { width, height } = commonStore.container
+  const backImgcontainer = commonStore.backImgcontainer
+  const backImg = commonStore.backImg
   const editor = commonStore.editor
   drawArea.target.set({
     width: item.width,
@@ -74,6 +76,17 @@ const chooseSizeAc = (item, isZoom = true) => {
     left: (width - item.width) / 2,
     top: (height - item.height) / 2
   })
+  // 切换绘制尺寸，重新调整背景缩放
+  if (backImg) {
+    backImg.set({
+      scaleX: item.width / backImgcontainer.width,
+      scaleY: item.height / backImgcontainer.height,
+      selectable: false,
+      left: (width - item.width) / 2,
+      top: (height - item.height) / 2
+    })
+  }
+
   // 画布已经缩放，不必再进一步缩放
   if (isZoom) {
     editor.zoomToPoint(

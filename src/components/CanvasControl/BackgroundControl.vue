@@ -47,6 +47,7 @@ const deleteBgAc = () => {
 }
 const addBgAc = () => {
   const editor = commonStore.editor
+  const backImgcontainer = commonStore.backImgcontainer
   const { width, height } = commonStore.container
   const { offsetWidth, offsetHeight } = photoViewRef.value
   let backImg = new fabric.FabricImage(photoViewRef.value, {
@@ -59,6 +60,8 @@ const addBgAc = () => {
   })
   editor.add(backImg)
   commonStore.backImg = markRaw(backImg)
+  backImgcontainer.width = offsetWidth
+  backImgcontainer.height = offsetHeight
 }
 </script>
 
