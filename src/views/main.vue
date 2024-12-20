@@ -33,8 +33,9 @@
       </div>
       <div class="slide slide-right">
         <div class="right-box" v-show="!rightToggle">
-          <SizeControl></SizeControl>
-          <BackgroundControl></BackgroundControl>
+          <SizeControl v-if="commonStore.editorControlType.includes('SIZE')"></SizeControl>
+          <BackgroundControl v-if="commonStore.editorControlType.includes('BACKGROUND')"></BackgroundControl>
+          <FontControl v-if="commonStore.editorControlType.includes('TEXT')"></FontControl>
         </div>
         <div class="toggle" @click="changeToggle('right')">
           <svg-icon :icon="rightToggle ? 'zuojiantou' : 'youjiantou'"></svg-icon>
@@ -53,6 +54,7 @@ import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
+import FontControl from '@/components/EditorControl/FontControl.vue'
 import EditorBar from '@/components/LayoutCo/EditorBar.vue'
 import BackgroundControl from '@/components/CanvasControl/BackgroundControl.vue'
 import TextAdd from '@/components/LayoutCo/TextAdd.vue'
@@ -121,7 +123,6 @@ const initEditor = () => {
     width: offsetWidth,
     height: offsetHeight
   })
-  editor.remove()
   // 初始化绘制区域
   const rect = new fabric.Rect({
     width: drawArea.width,
@@ -132,7 +133,18 @@ const initEditor = () => {
     selectable: false
   })
   editor.add(rect)
+  // 定制字体导入
+  const fontMap = {
+    DaoLiTi: 'url(/font/AlimamaDaoLiTi.woff2)'
+  }
+  const fontDaoLiTi = new FontFace('DaoLiTi', fontMap.DaoLiTi, {
+    style: 'normal',
+    weight: 'normal'
+  })
 
+  Promise.all([fontDaoLiTi.load()]).then(() => {
+    document.fonts.add(fontDaoLiTi)
+  })
   // 初始化绘制区域按中心点缩放
   editor.zoomToPoint(
     {
@@ -170,9 +182,16 @@ const initEditor = () => {
       editor.lastPosY = evt.clientY
     }
   })
+
   editor.on('mouse:up', (opt) => {
     editor.isDragging = false
   })
+  // 注册元素选中事件
+  editor.on('selection:created', (opt) => {
+    const { selected } = opt
+    commonStore.editTarget = selected[0]
+  })
+
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
   commonStore.container.width = offsetWidth

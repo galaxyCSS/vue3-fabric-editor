@@ -22,6 +22,9 @@ export const useCommonStore = defineStore('common', {
     backImgcontainer: {
       width: 0,
       height: 0
-    }
+    },
+    // 当前空间类型
+    editorControlType: ['SIZE', 'BACKGROUND'],
+    editTarget: null
   })
 })
