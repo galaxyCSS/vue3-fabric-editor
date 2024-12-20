@@ -54,7 +54,7 @@ import { ref, onMounted, markRaw } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import SizeControl from '@/components/CanvasControl/SizeControl.vue'
 import SizeScaleControl from '@/components/CanvasControl/SizeScaleControl.vue'
-import FontControl from '@/components/EditorControl/FontControl.vue'
+import FontControl from '@/components/EditorControl/FontControl/FontControl.vue'
 import EditorBar from '@/components/LayoutCo/EditorBar.vue'
 import BackgroundControl from '@/components/CanvasControl/BackgroundControl.vue'
 import TextAdd from '@/components/LayoutCo/TextAdd.vue'
@@ -189,9 +189,16 @@ const initEditor = () => {
   // 注册元素选中事件
   editor.on('selection:created', (opt) => {
     const { selected } = opt
-    commonStore.editTarget = selected[0]
+    commonStore.editTarget = markRaw(selected[0])
+    // 区分选中元素类型以显示不同编辑控件
+    if (selected[0].text) {
+      commonStore.editorControlType = ['TEXT']
+    }
   })
-
+  // 注册元素取消选中事件
+  editor.on('selection:cleared', (opt) => {
+    commonStore.editorControlType = ['SIZE', 'BACKGROUND']
+  })
   commonStore.editor = markRaw(editor)
   commonStore.drawArea.target = markRaw(rect)
   commonStore.container.width = offsetWidth

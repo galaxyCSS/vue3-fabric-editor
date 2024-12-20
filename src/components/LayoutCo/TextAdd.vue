@@ -23,8 +23,9 @@ const createTextAc = () => {
     left: width / 2,
     top: height / 2,
     fontSize: 76,
-    fontWeight: 600,
-    fontFamily: 'DaoLiTi'
+    fontWeight: 600
+    // fontFamily: 'DaoLiTi',
+    // fill: 'rgba(0,0,0,0.5)'
   })
   editor.add(createText)
 }
