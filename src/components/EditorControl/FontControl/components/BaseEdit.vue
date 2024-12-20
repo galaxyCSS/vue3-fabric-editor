@@ -1,6 +1,6 @@
 <template>
   <div class="base-edit">
-    <div class="item" v-for="item in baseEdit" :key="item.label">
+    <div class="item" v-for="item in baseEdit" :key="item.label" @click="baseEditAc(item)">
       <div v-if="item.label === '透明度'">
         <el-popover :width="200" trigger="click">
           <template #reference>
@@ -49,6 +49,32 @@ const opacityChange = (val) => {
     opacity: val / 100
   })
   editor.renderAll()
+}
+const cloneAc = async () => {
+  let target = commonStore.editTarget
+  const editor = commonStore.editor
+  let cloneTarget = await target.clone()
+  cloneTarget.set({
+    top: cloneTarget.top - 30,
+    left: cloneTarget.left - 30
+  })
+  editor.add(cloneTarget)
+}
+const delAc = () => {
+  let target = commonStore.editTarget
+  const editor = commonStore.editor
+  editor.remove(target)
+}
+const baseEditAc = (item) => {
+  const label = item.label
+  switch (label) {
+    case '创建副本':
+      cloneAc()
+      break
+    case '删除':
+      delAc()
+      break
+  }
 }
 onMounted(() => {
   let target = commonStore.editTarget
