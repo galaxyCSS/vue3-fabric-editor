@@ -141,6 +141,8 @@ const initEditor = () => {
     style: 'normal',
     weight: 'normal'
   })
+  // 绘制区域裁切
+  editor.clipPath = rect
 
   Promise.all([fontDaoLiTi.load()]).then(() => {
     document.fonts.add(fontDaoLiTi)
