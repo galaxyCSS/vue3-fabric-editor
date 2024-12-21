@@ -194,7 +194,6 @@ const initEditor = () => {
     commonStore.editTarget = markRaw(selected[0])
     // 区分选中元素类型以显示不同编辑控件
     if (selected[0].text) {
-      console.log(selected[0].fontFamilyCode)
       commonStore.editorControlType = ['TEXT']
     }
   })

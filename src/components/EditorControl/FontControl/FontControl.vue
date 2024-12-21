@@ -1,5 +1,6 @@
 <template>
-  <div class="font-control">
+  <FontFamilyChoose v-if="isChooseFont" v-model="isChooseFont"></FontFamilyChoose>
+  <div class="font-control" v-else>
     <div class="label">
       <span>字体编辑</span>
     </div>
@@ -9,7 +10,7 @@
         class="bg"
         :style="{ backgroundImage: `url(/src/assets/img/font/${fontFamilyCodeMap[editTarget.fontFamilyCode]}.png)` }"
       ></div>
-      <div class="label">
+      <div class="label" @click="isChooseFont = true">
         <span>字体</span>
         <svg-icon icon="xiajiantoucu"></svg-icon>
       </div>
@@ -21,26 +22,12 @@
 import { ref, onMounted } from 'vue'
 import SvgIcon from '@/components/common/SvgIcon.vue'
 import BaseEdit from './components/BaseEdit.vue'
+import FontFamilyChoose from './components/FontFamilyChoose.vue'
 import { useCommonStore } from '@/store/common'
+import { fontFamilyCodeMap } from '@/assets/data/staticData'
+const isChooseFont = ref(false)
 const commonStore = useCommonStore()
 const editTarget = commonStore.editTarget
-const fontFamilyCodeMap = {
-  DEFAULT: 'default'
-}
-const baseEdit = [
-  {
-    label: '透明度',
-    icon: 'toumingdu'
-  },
-  {
-    label: '创建副本',
-    icon: 'chuangjianfuben'
-  },
-  {
-    label: '删除',
-    icon: 'icdelete'
-  }
-]
 onMounted(() => {
   console.log(editTarget.fontFamilyCode)
 })
