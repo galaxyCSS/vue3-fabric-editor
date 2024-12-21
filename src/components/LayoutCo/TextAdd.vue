@@ -27,6 +27,8 @@ const createTextAc = () => {
     // fontFamily: 'DaoLiTi',
     // fill: 'rgba(0,0,0,0.5)'
   })
+  // 记录当前使用的字体类型CODE
+  createText.fontFamilyCode = 'DEFAULT'
   editor.add(createText)
 }
 </script>

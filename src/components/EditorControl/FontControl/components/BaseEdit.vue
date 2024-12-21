@@ -88,6 +88,7 @@ onMounted(() => {
 .base-edit {
   display: flex;
   border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
   .item {
     padding: 5px;
     cursor: pointer;
