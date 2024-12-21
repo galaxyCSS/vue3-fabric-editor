@@ -135,18 +135,29 @@ const initEditor = () => {
   editor.add(rect)
   // 定制字体导入
   const fontMap = {
-    DaoLiTi: 'url(/font/AlimamaDaoLiTi.woff2)'
+    DaoLiTi: 'url(/font/AlimamaDaoLiTi.woff2)',
+    FangYuanTi: 'url(/font/AlimamaFangYuanTiVF-Thin.woff2)',
+    LingDongTi: 'url(/font/AlimamaAgileVF-Thin.woff2)'
   }
   const fontDaoLiTi = new FontFace('DaoLiTi', fontMap.DaoLiTi, {
     style: 'normal',
     weight: 'normal'
   })
+  const fontFangYuanTi = new FontFace('FangYuanTi', fontMap.FangYuanTi, {
+    style: 'normal',
+    weight: 'normal'
+  })
+  const fontLingDongTi = new FontFace('LingDongTi', fontMap.LingDongTi, {
+    style: 'normal',
+    weight: 'normal'
+  })
+  Promise.all([fontDaoLiTi.load(), fontFangYuanTi.load(), fontLingDongTi.load()]).then(() => {
+    document.fonts.add(fontDaoLiTi)
+    document.fonts.add(fontFangYuanTi)
+    document.fonts.add(fontLingDongTi)
+  })
   // 绘制区域裁切
   editor.clipPath = rect
-
-  Promise.all([fontDaoLiTi.load()]).then(() => {
-    document.fonts.add(fontDaoLiTi)
-  })
   // 初始化绘制区域按中心点缩放
   editor.zoomToPoint(
     {

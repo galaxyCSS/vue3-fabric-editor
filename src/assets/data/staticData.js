@@ -1,4 +1,6 @@
 export const fontFamilyCodeMap = {
   DEFAULT: 'default',
-  DaoLiTi: 'daoliti'
+  DaoLiTi: 'daoliti',
+  FangYuanTi: 'fangyuanti',
+  LingDongTi: 'lingdongti'
 }
